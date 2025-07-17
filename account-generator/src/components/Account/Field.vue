@@ -13,14 +13,18 @@
       class="border rounded px-3 py-2 w-full"
     />
 
-    <select class="border rounded px-3 py-2 w-full">
-      <option>Локальная</option>
-      <option>LDAP</option>
+    <select
+      class="border rounded px-3 py-2 w-full"
+      v-model="targetAccount.type"
+    >
+      <option value="Local">Локальная</option>
+      <option value="LDAP">LDAP</option>
     </select>
 
     <input
+      v-model="targetAccount.login"
       type="text"
-      placeholder="Значение"
+      placeholder="Логин"
       class="border rounded px-3 py-2 w-full"
       maxlength="100"
       required
@@ -29,6 +33,7 @@
     <div v-if="hasPassword" class="relative w-full">
       <input
         :type="visibilityComponent === OpenEye ? 'password' : 'text'"
+        v-model="targetAccount.password"
         placeholder="Пароль"
         class="border rounded px-3 py-2 w-full"
         maxlength="100"
@@ -66,8 +71,20 @@
 
 <script lang='ts' setup>
 import { shallowRef, VueElement, type ShallowRef } from "vue";
+import { useAccountStore } from "@/stores/account";
 import OpenEye from "../ui/OpenEye.vue";
-const props = defineProps<{}>();
+import { computed } from "vue";
+import type { Account } from "@/types";
+import { watch } from "vue";
+const accountStore = useAccountStore();
+
+const props = defineProps<{
+  id: string;
+}>();
+
+const targetAccount = accountStore.accounts.find(
+  (acc: Account) => acc.id === props.id
+);
 
 async function changeVisibility(): Promise<void> {
   if (visibilityComponent.value === OpenEye) {
@@ -79,7 +96,14 @@ async function changeVisibility(): Promise<void> {
   }
 }
 const visibilityComponent: ShallowRef<VueElement> = shallowRef(OpenEye);
-const hasPassword: boolean = true;
+
+const hasPassword = computed(() => targetAccount.type === "Local");
+
+watch(hasPassword, (newValue: Boolean) => {
+  if (!newValue) {
+    targetAccount.password = null;
+  }
+});
 </script>
 
 <style lang="scss" scoped>

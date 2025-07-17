@@ -6,7 +6,10 @@
     </div>
     <layout-clue />
     <fields-title />
-    <Field />
+
+    <template v-for="item in accountStore.accounts">
+      <Field :id="item.id" />
+    </template>
   </div>
 </template>
 
@@ -15,6 +18,8 @@ import LayoutClue from "@/components/Layout/Clue.vue";
 import CreateBtn from "./components/Layout/CreateBtn.vue";
 import FieldsTitle from "@/components/Layout/FieldsTitle.vue";
 import Field from "./components/Account/Field.vue";
+import { useAccountStore } from "./stores/account";
+const accountStore = useAccountStore();
 </script>
 
 
