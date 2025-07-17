@@ -16,10 +16,15 @@ const accountStore = useAccountStore();
 function createAccount() {
   accountStore.accounts.push({
     id: crypto.randomUUID(),
-    tags: [],
     type: "Local",
     login: null,
     password: null,
+    errors: {
+      tags: false,
+      login: false,
+      password: false,
+    },
+    isValid: false,
   });
 }
 </script>

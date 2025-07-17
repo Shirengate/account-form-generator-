@@ -4,8 +4,8 @@
   >
     <span>Метки</span>
     <span>Тип записи</span>
-    <span>Логин</span>
-    <span>Пароль</span>
+    <span>Логин<sup>*</sup></span>
+    <span>Пароль<sup>*</sup></span>
   </div>
 </template>
 <style scoped>

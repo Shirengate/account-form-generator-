@@ -11,6 +11,8 @@
       type="text"
       placeholder="Метки"
       class="border rounded px-3 py-2 w-full"
+      :class="targetAccount.errors.tags ? 'border border-red-500' : ''"
+      v-model="tags"
     />
 
     <select
@@ -25,6 +27,7 @@
       v-model="targetAccount.login"
       type="text"
       placeholder="Логин"
+      :class="targetAccount.errors.login ? 'border border-red-500' : ''"
       class="border rounded px-3 py-2 w-full"
       maxlength="100"
       required
@@ -34,6 +37,7 @@
       <input
         :type="visibilityComponent === OpenEye ? 'password' : 'text'"
         v-model="targetAccount.password"
+        :class="targetAccount.errors.password ? 'border border-red-500' : ''"
         placeholder="Пароль"
         class="border rounded px-3 py-2 w-full"
         maxlength="100"
@@ -70,12 +74,20 @@
 </template>
 
 <script lang='ts' setup>
-import { shallowRef, VueElement, type ShallowRef } from "vue";
 import { useAccountStore } from "@/stores/account";
 import OpenEye from "../ui/OpenEye.vue";
-import { computed } from "vue";
 import type { Account } from "@/types";
-import { watch } from "vue";
+import {
+  watch,
+  ref,
+  computed,
+  shallowRef,
+  VueElement,
+  type ShallowRef,
+} from "vue";
+import { useValidateFields } from "@/composables/useValidateFields";
+
+const { validateTags: debouncer } = useValidateFields();
 const accountStore = useAccountStore();
 
 const props = defineProps<{
@@ -99,10 +111,26 @@ const visibilityComponent: ShallowRef<VueElement> = shallowRef(OpenEye);
 
 const hasPassword = computed(() => targetAccount.type === "Local");
 
+const tags = ref("");
 watch(hasPassword, (newValue: Boolean) => {
   if (!newValue) {
     targetAccount.password = null;
   }
+});
+function debounce(fn: Function, ms: number) {
+  let timer: number;
+  return function (...args: any) {
+    clearTimeout(timer);
+    const context = this;
+    timer = window.setTimeout(function () {
+      fn.apply(context, args);
+    }, ms);
+  };
+}
+
+const validateTags = debounce(debouncer, 1000);
+watch(tags, (newValue: String) => {
+  validateTags(newValue, targetAccount);
 });
 </script>
 
