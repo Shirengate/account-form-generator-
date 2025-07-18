@@ -33,7 +33,7 @@ defineProps<{
     error:boolean
 }>()
 const model = defineModel()
-const visibilityComponent: ShallowRef<VueElement> = shallowRef(OpenEye);
+const visibilityComponent = shallowRef(OpenEye);
 
 async function changeVisibility(): Promise<void> {
 if (visibilityComponent.value === OpenEye) {
