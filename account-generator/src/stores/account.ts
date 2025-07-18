@@ -1,7 +1,10 @@
 import type { Account } from "@/types";
 import { defineStore } from "pinia";
 import { computed, type Ref, ref, watch } from "vue";
+
 type ParsedAccount = Omit<Account, 'password' | 'login' | 'type'>
+
+
 export const useAccountStore = defineStore('account-store', () => {
     const accounts: Ref<Array<Account>> = ref([]);
 
@@ -26,17 +29,17 @@ export const useAccountStore = defineStore('account-store', () => {
       }
     }
 
-    const validatedAccounts = computed(() => {
-        return accounts.value?.filter(item => item.isValid).map(item => {
-            return {
-                password:item.password,
-                login:item.login,
-                type:item.type,
-                tags:item.tags,
-                id:item.id
-            }
-        })
-    })
+    const validatedAccounts = computed(() =>
+      accounts.value
+        .filter((item) => item.isValid)
+        .map(({ password, login, type, tags, id }) => ({
+          password,
+          login,
+          type,
+          tags,
+          id,
+        }))
+    );
     watch(
       () => validatedAccounts.value,
       (newVal) => {

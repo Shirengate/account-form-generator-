@@ -9,7 +9,7 @@
 
     <div v-auto-animate>
       <template v-for="(item,index) in accountStore.accounts" :key="item.id"  >
-      <Field :id="item.id"  :index="index"/>
+      <Account :id="item.id"  :index="index"/>
     </template>
     </div>
   </div>
@@ -19,8 +19,7 @@
 import LayoutClue from "@/components/Layout/Clue.vue";
 import CreateBtn from "./components/Layout/CreateBtn.vue";
 import FieldsTitle from "@/components/Layout/FieldsTitle.vue";
-import Field from "./components/Account/Field.vue";
-import {onMounted} from 'vue'
+import Account from "./components/Account/index.vue";
 import { useAccountStore } from "./stores/account";
 const accountStore = useAccountStore();
 
