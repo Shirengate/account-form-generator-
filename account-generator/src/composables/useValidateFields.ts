@@ -1,4 +1,4 @@
-import type { Account, Note } from "@/types";
+import type { Account } from "@/types";
 
 export const useValidateFields = () => {
     const validateTags = (value:string, account:Account) => {
@@ -13,7 +13,23 @@ export const useValidateFields = () => {
                 text:value
             }
         })
+        account.errors.tags = false;
         account.tags = tagsArray;
     }
-    return {validateTags}
+    const validateLoginAndPassword = (account: Account, field: 'login' | 'password'): boolean => {
+        const value = field === 'login' 
+            ? account.login?.trim() 
+            : account.password?.trim();
+        if (field === 'password' && account.password === null) {
+            account.errors.password = false;
+            return true;
+        }
+        if (!value || value.length === 0) {
+            account.errors[field] = true;
+            return false;
+        }
+        account.errors[field] = false;
+        return true;
+    };
+    return {validateTags , validateLoginAndPassword}
 }

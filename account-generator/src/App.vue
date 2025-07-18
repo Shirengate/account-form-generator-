@@ -7,9 +7,11 @@
     <layout-clue />
     <fields-title />
 
-    <template v-for="item in accountStore.accounts">
-      <Field :id="item.id" />
+    <div v-auto-animate>
+      <template v-for="(item,index) in accountStore.accounts" :key="item.id"  >
+      <Field :id="item.id"  :index="index"/>
     </template>
+    </div>
   </div>
 </template>
 
@@ -18,8 +20,10 @@ import LayoutClue from "@/components/Layout/Clue.vue";
 import CreateBtn from "./components/Layout/CreateBtn.vue";
 import FieldsTitle from "@/components/Layout/FieldsTitle.vue";
 import Field from "./components/Account/Field.vue";
+import {onMounted} from 'vue'
 import { useAccountStore } from "./stores/account";
 const accountStore = useAccountStore();
+
 </script>
 
 

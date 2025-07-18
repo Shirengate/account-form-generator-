@@ -10,12 +10,15 @@
     <input
       type="text"
       placeholder="Метки"
+      maxlength="50"
       class="border rounded px-3 py-2 w-full"
       :class="targetAccount.errors.tags ? 'border border-red-500' : ''"
       v-model="tags"
+      @blur="validateFields"
     />
 
     <select
+      @change="validateFields"
       class="border rounded px-3 py-2 w-full"
       v-model="targetAccount.type"
     >
@@ -25,6 +28,7 @@
 
     <input
       v-model="targetAccount.login"
+      @blur="validateFields"
       type="text"
       placeholder="Логин"
       :class="targetAccount.errors.login ? 'border border-red-500' : ''"
@@ -37,6 +41,7 @@
       <input
         :type="visibilityComponent === OpenEye ? 'password' : 'text'"
         v-model="targetAccount.password"
+        @blur="validateFields"
         :class="targetAccount.errors.password ? 'border border-red-500' : ''"
         placeholder="Пароль"
         class="border rounded px-3 py-2 w-full"
@@ -52,6 +57,7 @@
     </div>
 
     <button
+    @click="deleteAccount"
       class="text-red-500 self-center justify-self-center cursor-pointer hover:text-red-700"
       title="Удалить запись"
     >
@@ -76,7 +82,7 @@
 <script lang='ts' setup>
 import { useAccountStore } from "@/stores/account";
 import OpenEye from "../ui/OpenEye.vue";
-import type { Account } from "@/types";
+import { Account } from "@/types";
 import {
   watch,
   ref,
@@ -85,13 +91,14 @@ import {
   VueElement,
   type ShallowRef,
 } from "vue";
-import { useValidateFields } from "@/composables/useValidateFields";
-
-const { validateTags: debouncer } = useValidateFields();
+import { useValidateFields  } from "@/composables/useValidateFields";
+import {debounce, collectTags} from '@/utils/index.ts'
+const { validateTags:debouncer, validateLoginAndPassword } = useValidateFields();
 const accountStore = useAccountStore();
 
 const props = defineProps<{
   id: string;
+  index:number
 }>();
 
 const targetAccount = accountStore.accounts.find(
@@ -111,28 +118,31 @@ const visibilityComponent: ShallowRef<VueElement> = shallowRef(OpenEye);
 
 const hasPassword = computed(() => targetAccount.type === "Local");
 
-const tags = ref("");
+const tags = ref(collectTags(targetAccount?.tags));
 watch(hasPassword, (newValue: Boolean) => {
   if (!newValue) {
-    targetAccount.password = null;
+    targetAccount.password = '';
   }
 });
-function debounce(fn: Function, ms: number) {
-  let timer: number;
-  return function (...args: any) {
-    clearTimeout(timer);
-    const context = this;
-    timer = window.setTimeout(function () {
-      fn.apply(context, args);
-    }, ms);
-  };
+
+function deleteAccount(){
+  accountStore.accounts = accountStore.accounts.filter((item:Account, index:number) => index !== props.index)
 }
 
+
 const validateTags = debounce(debouncer, 1000);
+
+function validateFields(){
+  validateLoginAndPassword(targetAccount, 'login');
+  validateLoginAndPassword(targetAccount, 'password');
+  if(Object.values(targetAccount.errors).every(tr => !tr)){
+    targetAccount.isValid = true
+  }else{
+    targetAccount.isValid = false
+  }
+}
+
 watch(tags, (newValue: String) => {
   validateTags(newValue, targetAccount);
 });
 </script>
-
-<style lang="scss" scoped>
-</style>

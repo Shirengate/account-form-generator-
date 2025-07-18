@@ -17,14 +17,14 @@ function createAccount() {
   accountStore.accounts.push({
     id: crypto.randomUUID(),
     type: "Local",
-    login: null,
-    password: null,
+    login: '',
+    password: '',
     errors: {
       tags: false,
       login: false,
       password: false,
     },
-    isValid: false,
+    isValid:false
   });
 }
 </script>
