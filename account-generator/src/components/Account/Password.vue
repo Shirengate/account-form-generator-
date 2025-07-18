@@ -28,7 +28,7 @@ const emit = defineEmits<{
     (e: 'validateFields'): void
 }>()
 
-const props = defineProps<{
+defineProps<{
     hasPassword:boolean,
     error:boolean
 }>()

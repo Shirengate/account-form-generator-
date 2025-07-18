@@ -37,7 +37,11 @@
         @blur="validateFields"
       />
 
-      <PasswordField   v-model="targetAccount.password" @validate-fields="validateFields"  :has-password="hasPassword" :error="targetAccount.errors.password"/>
+      <PasswordField   
+       v-model="targetAccount.password"
+       @validate-fields="validateFields"  
+       :has-password="hasPassword" 
+       :error="targetAccount.errors.password"/>
   
       <button
         type="button"
@@ -45,7 +49,7 @@
         class="text-red-500 self-center justify-self-center hover:text-red-700 cursor-pointer"
         title="Удалить запись"
       >
-      <delete-cross></delete-cross>
+      <delete-cross />
       </button>
     </div>
   </template>
@@ -102,6 +106,5 @@
       targetAccount.password = ''
     }
   })
-
   </script>
   
